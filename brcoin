@@ -1,0 +1,565 @@
+#!/bin/bash
+# brcoin: get brazilian traded cryptocoin prices in command line
+
+# Author: esqb (github.com/esqb)
+# Date: Feb 27 2021
+
+# Metadata Variables
+data_source="mercadobitcoin.net"
+software_name="brcoin"
+software_version="1.0"
+software_author="Luciano Ayres (github.com/lucianoayres)"
+
+# Script Setting Variables
+coin_tags=("BCH" "BTC" "CHZ" "ETH" "LINK" "LTC" "MCO2" "PAXG" "USDC" "WBX" "XRP")
+coin_selection=()
+data_item=("last" "buy" "sell" "high" "low" "open" "vol" "date")
+item_selection=""
+default_item="last"
+currency_symbol="R$"
+symbol_flag=false
+round_flag=false
+round_digit=4
+show_help_flag=false
+show_version_flag=false
+
+# Argument & Options Control Variables
+view_mode="table"
+view_arg=false
+item_arg=false
+last_arg=""
+
+# Functions
+
+# display error message
+#Parameters: $error_type [coin, view, item, api, json or 'empty'] and $error_arg [erroneous argument text]
+throw_error(){
+	if [ $show_help_flag == false ]
+	then
+		error_type=$1
+		error_arg=$2
+		case $error_type in
+			coin)
+				echo "Error: missing coin argument."
+				;;
+			view)
+				echo "Error: unexpected additional view argument '$error_arg'."
+				;;
+			item)
+				echo "Error: unexpected additional data type argument '$error_arg'."
+				;;
+			data)
+				echo "Error: invalid argument for selected view mode."
+				;;
+			api)
+				echo "Error: API response timeout."
+				exit 2
+				;;
+			json)
+				echo "Error: failed to parse JSON data."
+				exit 2
+				;;
+			*)
+				echo "Error: unknown argument '$error_arg'."
+				;;
+		esac
+		echo "Try 'brcoin --help' for more information."
+		exit 1
+	fi
+}
+
+# display script help & instructions
+show_usage(){
+	cat << EOF
+$software_name version $software_version
+By $software_author
+
+Quick Usage: brcoin
+Display price table of cryptocoins listed in Mercado Bitcoin.
+
+Detailed Usage: brcoin [COIN] [VIEW MODE] [DATA TYPE]
+Display cryptocoin prices in brazilian reais from Mercado Bitcoin public API.
+
+[COIN] argument takes a single or multiple cryptocoins ticker symbols.
+Mandatory only when used combined with the folowing [VIEW MODE] types: raw, round, currency and single. If no [DATA TYPE] is set, --last is set by default.
+
+bch			get Bitcoin Cash price
+btc			get Bitcoi price
+chz			get Chiliz price
+eth			get Ethereum price
+link			get Chainlink price
+ltc			get Litecoin price
+mco2			get Moss Earth price
+paxg			get PAX Gold price
+usdc			get USD Coin price
+wbx			get WBiX price
+xrp			get Ripple price
+
+All prices in brazilian reais (R$).
+
+Example: brcoin btc
+Output: display table view with updated bitcoin price data.
+
+Example: brcoin bch btc eth link
+Output: display table view with Bitcoin Cash, Bitcoin, Ethereum and Link coin updated price data. 
+
+[VIEW MODE] optional argument sets the data output style to be displayed. If no [VIEW MODE] is set, --table is used by default. Raw, single and table view are exclusive and can not be combined with each other or any other available view mode. Round, -d and -d0 view modes can be combined with -currency view mode. 
+
+-r, -raw		display raw price data	
+-d, -round		display rounded price data to 04 decimal places
+-d2			display rounded price data to 02 decimal places
+-d0			display rounded price data with no decimal places
+-c, -currency		display raw price data with brazilian real currency symbol
+-single			display all price data of the selected cryptocoin
+-table			display selected cryptocoin(s) price data in table format.
+
+Example: brcoin eth
+Output: display table view Ethereum updated price data.
+
+Example: brcoin ltc -r
+Output: display Litecoin raw updated price
+
+Example: brcoin xrp -single
+Output: display single view Ripple updated price data.
+
+Example: brcoin btc -d2 -c
+Output: display Bitcoin price data rounded to 2 decimal places with brazilian real currency symbol.
+
+[DATA TYPE] optional argument sets the data items to be displayed in compatible [VIEW MODE] types: raw, rounded and currency. Only one [DATA TYPE] argument allowed per usage.
+
+--last			last price
+--buy			buy price
+--sell			sell price
+--high			highest price of the day
+--low			lowest prie of the day
+--open			opening price of the day
+--vol, --volume		negotiated volume of the day
+
+Example: brcoin btc -r --high
+Output: display Bitcoin highest price of the day data.
+
+Example: brcoin eth -d -c --buy
+Output: display Ethereum rounded opening price of the day data with brazilian real currency symbol.
+
+Additional options:
+
+	--help		display this help and exit
+	--version 	output version information and exit.
+
+Exit status:
+ 0 if Ok,
+ 1 if minor problems (e.g. unknown argument),
+ 2 if serious trouble (e.g. API unavailable).
+
+$software_name online help and documentation: <https://github.com/esqb/brcoin>
+EOF
+exit 0
+}
+
+# show software version
+show_version(){
+	echo $software_version
+	exit 0
+}
+
+# add coin to selected coins list stored in $coin_selection
+# Parameter: coin ID/tag in $coin_tags
+set_coin(){
+	coin_tag=$1	
+	coin_selection+=($coin_tag)
+}
+
+# add all available coins to selected coins ($coin_selection)
+set_all_coins(){
+	for tag in "${coin_tags[@]}"
+	do
+		coin_selection+=($tag)
+	done
+}
+
+# round float number up with the amount of decimal
+# digits stored in $round_digits
+# Parameter: Text/string in float number notation 
+get_round(){
+	data=$1
+	echo "$data" | LC_ALL=C xargs /usr/bin/printf "%.*f\n" "$round_digit"
+}
+
+# add currency symbol to coin value text
+# Parameter: Text/string in float number notation 
+get_formatted(){
+	data=$1
+	echo "$currency_symbol $data"
+}
+
+# retrieve specified item value data from loaded JSON
+# Parameter: Any item in $data_item list
+get_item(){
+	coin_data=$1
+	item_name=$2
+	data=$(echo $coin_data | jq -r ".ticker.$item_name" 2> /dev/null ;)
+	if [ ! -z $data ]
+	then
+
+		if [ $round_flag == true ] && [ $item_name != "date" ]
+		then
+			result=$(get_round $data)	
+		else
+			if [ $item_name = "date" ]
+			then
+				if [ "$OSTYPE" == "darwin"* ]
+				then
+					result=$(date -r "$data" +"%I:%M:%S %p")
+				else
+					result=$(date -d "@$data" +"%I:%M:%S %p")
+				fi
+			else
+				result=$data
+			fi
+		fi
+		echo $result
+	else
+		throw_error "json"
+	fi
+}
+
+# make API call and store JSON data
+# Parameter: coin ID/tag in $coin_tags
+get_data(){
+	coin=$1
+	data=$(curl -s https://www.mercadobitcoin.net/api/${coin}/ticker ;)
+	if [ $? -eq 0 ]
+	then
+		echo $data
+	else
+		throw_error "api"
+	fi
+}
+# convert unix time
+get_date(){
+	time_data=$1
+	echo date -d "@$time_data" +"%I:%M:%S %P"
+}
+
+# display coin data in table view mode
+get_table(){
+	if [ -z $coin_selection ]
+	then
+		set_all_coins
+	fi
+	round_flag=true
+	firstline_flag=true
+	col=$'\e[1;30m'"|"$'\e[0m'
+	row="$col %-5s$col %-12s$col %-12s$col %-12s$col %-12s$col %-12s$col\n"
+	separator=$'\e[1;30m'------------------------------------------------------------------------------$'\e[0m'
+	for coin in "${coin_selection[@]}"
+	do
+		coin_data=$( get_data $coin )	
+		coin_last=$( get_item "$coin_data" "last" )
+		coin_buy=$( get_item "$coin_data" "buy" )
+		coin_sell=$( get_item "$coin_data" "sell" )
+		coin_high=$( get_item "$coin_data" "high" )
+		coin_low=$( get_item "$coin_data" "low" )
+		coin_date=$( get_item "$coin_data" "date" )
+		if [ $firstline_flag == true ]
+		then
+			echo
+			echo "  Data from $data_source | Updated at $coin_date"
+			echo $separator
+			printf "$row" "Coin" "Last (R$)" "Buy (R$)" "Sell (R$)" "High (R$)" "Low (R$)"
+			echo $separator
+			firstline_flag=false
+		fi
+		printf "$row" $(echo "$coin" | tr '[:lower:]' '[:upper:]') $coin_last $coin_buy $coin_sell $coin_high $coin_low
+		echo $separator
+	done	
+	echo "  $software_name v$software_version by $software_author"
+}
+
+# display coin data in single table view mode
+get_table_single(){
+	coin="${coin_selection[0]}"
+	round_flag=true
+	col=$'\e[1;30m'"|"$'\e[0m'
+	row="$col %8s $col %-14s $col\n"
+	separator=$'\e[1;30m'-----------------------------$'\e[0m'
+	coin_data=$( get_data $coin )	
+	coin_last=$( get_item "$coin_data" "last" )
+	coin_buy=$( get_item "$coin_data" "buy" )
+	coin_sell=$( get_item "$coin_data" "sell" )
+	coin_open=$( get_item "$coin_data" "open" )
+	coin_high=$( get_item "$coin_data" "high" )
+	coin_low=$( get_item "$coin_data" "low" )
+	coin_vol=$( get_item "$coin_data" "vol" )
+	coin_date=$( get_item "$coin_data" "date" )
+	echo
+	echo "             $(echo "$coin" | tr '[:lower:]' '[:upper:]')"
+	echo " $separator"
+	printf " $row" "Last" "R$ $coin_last"
+	echo " $separator"
+	printf " $row" "Buy" "R$ $coin_buy"
+	echo " $separator"
+	printf " $row" "Sell" "R$ $coin_sell"
+	echo " $separator"
+	printf " $row" "Open" "R$ $coin_open"
+	echo " $separator"
+	printf " $row" "High" "R$ $coin_high"
+	echo " $separator"
+	printf " $row" "Low" "R$ $coin_low"
+	echo " $separator"
+	printf " $row" "Volume" $coin_vol
+	echo " $separator"
+	echo " Source: $data_source"
+	echo " Updated at $coin_date"
+}
+
+# set the data item to be displayed
+# Parameter: Any item in $data_item list
+set_item(){
+	item_name=$1
+	item_selection=$item_name
+}
+
+# display coin raw data
+get_raw(){
+	coin="${coin_selection[0]}"
+	coin_data=$( get_data $coin )
+	if [ -z $item_selection ]
+	then
+		item_selection=$default_item
+	fi
+	coin_raw_value=$( get_item "$coin_data" $item_selection )
+	if [ $round_flag == true ]
+	then
+		result=$(get_round $coin_raw_value)	
+	else
+		result=$coin_raw_value	
+	fi
+	if [ $symbol_flag == true ]
+	then
+		result=$(get_formatted $coin_raw_value)
+	fi
+	echo $result
+}
+
+# SCRIPT OPTIONS & ARGUMENTS LOOP
+while [ ! -z "$1" ]; do
+	case "$1" in
+		bch | BCH)
+			set_coin "BCH"
+			;;
+		btc | BTC | bitcoin | BITCOIN)
+			set_coin "BTC"
+			;;
+		chz | CHZ | chiliz | CHILIZ)
+			set_coin "CHZ"
+			;;
+		eth | ETH | ethereum | ETHEREUM)
+			set_coin "ETH"
+			;;
+		link | LINK)
+			set_coin "LINK"
+			;;
+		ltc | LTC | litecoin | LITECOIN)
+			set_coin "LTC"
+			;;
+		mco2 | MCO2)
+			set_coin "MCO2"
+			;;
+		paxg | PAXG)
+			set_coin "PAXG"
+			;;
+		usdc | USDC)
+			set_coin "USDC"
+			;;
+		wbx | WBX | wibx | WiBX | WIBIX)
+			set_coin "WBX"
+			;;
+		xrp | XRP | ripple | RIPPLE)
+			set_coin "XRP"
+			;;
+		-raw | -r)
+			if [ $view_arg == false ]
+			then
+				view_mode="raw"
+				view_arg=true
+			else
+				throw_error "view" $1
+			fi
+			;;
+		-round | -d)
+			if [ $view_arg == false ] || [ $symbol_flag == true ]
+			then
+				round_flag=true
+				view_mode="raw"
+				view_arg=true
+			else
+				throw_error "view" $1
+			fi
+			;;
+		-d2)
+			if [ $view_arg == false ] || [ $symbol_flag == true ]
+			then
+				round_flag=true
+				round_digit=2
+				view_mode="raw"
+				view_arg=true
+			else
+				throw_error "view" $1
+			fi
+			;;
+		-d0)
+			if [ $view_arg == false ] || [ $symbol_flag == true ]
+			then
+				round_flag=true
+				round_digit=0
+				view_mode="raw"
+				view_arg=true
+			else
+				throw_error "view" $1
+			fi
+			;;
+		-currency | -c)
+			if [ $view_arg == false ] || [ $round_flag == true ]
+			then
+				symbol_flag=true
+				view_mode="raw"
+				view_arg=true
+			else
+				throw_error "view" $1
+			fi
+			;;
+		-table | -t)
+			if [ $view_arg == false ]
+			then
+				view_mode="table"
+				view_arg=true
+			else
+				throw_error "view" $1
+			fi
+			;;
+		-single | -s)
+			if [ ! -z $coin_selection ]
+			then
+
+				if [ $view_arg == false ]
+				then
+					view_mode="single"
+					view_arg=true
+				else
+					throw_error "view" $1
+				fi
+			else
+				throw_error "coin"
+			fi
+			;;
+		--last)
+			if [ $item_arg == false ]
+			then
+				set_item "last"
+				item_arg=true
+			else
+				throw_error "item" $1
+			fi
+			;;
+		--buy)
+			if [ $item_arg == false ]
+			then
+				set_item "buy"
+				item_arg=true
+			else
+				throw_error "item" $1
+			fi
+			;;
+		--sell)
+			if [ $item_arg == false ]
+			then
+				set_item "sell"
+				item_arg=true
+			else
+				throw_error "item" $1
+			fi
+			;;
+		--high)
+			if [ $item_arg == false ]
+			then
+				set_item "high"
+				item_arg=true
+			else
+				throw_error "item" $1
+			fi
+			;;
+		--low)
+			if [ $item_arg == false ]
+			then
+				set_item "low"
+				item_arg=true
+			else
+				throw_error "item" $1
+			fi
+			;;
+		--open)
+			if [ $item_arg == false ]
+			then
+				set_item "open"
+				item_arg=true
+			else
+				throw_error "item" $1
+			fi
+			;;
+		--volume | --vol)
+			if [ $item_arg == false ]
+			then
+				set_item "vol"
+				item_arg=true
+			else
+				throw_error "item" $1
+			fi
+			;;
+		--help | -h)
+			if [ $show_version_flag == false ]
+			then
+				show_help_flag=true
+				show_usage
+			fi
+			;;
+		--version)
+			if [ $show_help_flag == false ]
+			then
+				show_version_flag=true
+				show_version
+			fi
+			;;
+		*)
+			throw_error " " $1
+			;;
+	esac
+	shift
+done
+
+case $view_mode in
+	table)
+		if [ -z $item_selection ]
+		then
+			get_table
+		else
+			throw_error "data"
+		fi	
+		;;
+	single)
+		if [ -z $item_selection ]
+		then
+			get_table_single
+		else
+			throw_error "data"
+		fi	
+		;;
+	raw)
+		if [ ! -z $coin_selection ]
+		then
+			get_raw
+		else
+			throw_error "coin"
+		fi
+		;;
+esac
