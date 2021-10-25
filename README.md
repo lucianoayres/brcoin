@@ -29,7 +29,7 @@
 Clone the project repository:
 
 ```sh
-$ git clone github.com/esqb/brcoin.git
+$ git clone github.com/lucianoayres/brcoin.git
 ```
 
 ### Step 2
