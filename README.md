@@ -26,7 +26,7 @@
 
 ### Step 1
 
-Clone the project repository (or [download](https://github.com/esqb/brcoin/archive/main.zip) the script file):
+Clone the project repository:
 
 ```sh
 $ git clone github.com/esqb/brcoin.git
