@@ -1,4 +1,4 @@
-<p align="center"><img src="https://i.postimg.cc/8cjQJKVh/brcoin-logo.png" /></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/20209393/138746249-cb0e15dc-8a2f-4b2a-a3e1-c3490ca823ec.png" /></p>
 
 <h2 align="center">Cryptocurrency prices in brazilian reais on command line</h2>
 
@@ -11,7 +11,7 @@
 ## Features
 
 - 10+ listed cryptocurrencies
-- Table view with multiple coins tracking 
+- Table view with multiple coins tracking
 - Raw price data you can integrate with your own project
 - Price rounding and add currency symbol options
 - Last, buy, sell, high, low and opening prices, and coin negotiated volume
@@ -20,21 +20,30 @@
 
 ## Screenshot
 
-<img src="https://i.postimg.cc/JhmMpCXx/screenshot.png" />
+<img src="https://user-images.githubusercontent.com/20209393/138746175-add46342-53d5-4509-af57-8b4f8c5dcc47.png" />
 
 ## Installation
+
 ### Step 1
+
 Clone the project repository (or [download](https://github.com/esqb/brcoin/archive/main.zip) the script file):
+
 ```sh
 $ git clone github.com/esqb/brcoin.git
 ```
+
 ### Step 2
+
 Assign "execute" permission to the file:
+
 ```sh
 $ sudo chmod +x brcoin
 ```
+
 ### Step 3
+
 Add the script path to your $PATH (or simply move it to a folder already in your $PATH):
+
 ```sh
 $ export PATH=$PATH:$PWD
 ```
@@ -51,11 +60,11 @@ $ sudo apt-get install jq
 ## Usage
 
 ```sh
-# Display table view with all listed cryptocurrency prices 
+# Display table view with all listed cryptocurrency prices
 $ brcoin
 ```
 
-## Examples 
+## Examples
 
 ```sh
 # Display table view with updated bitcoin price data
@@ -97,57 +106,60 @@ $ brcoin eth -d -c --buy
 brcoin [COIN] [VIEW MODE] [DATA TYPE]
 
 ### [COIN]
+
 Sets a single or multiple cryptocoins ticker symbols.
 Mandatory only when used combined with the folowing [VIEW MODE] types: raw, round, currency and single. If no [DATA TYPE] is set, --last is set by default.
 
-| [COIN] | Description |
-| ------ | ------ |
-| bch |			Get Bitcoin Cash price |
-| btc |			Get Bitcoi price |
-| chz |			Get Chiliz price |
-| eth |			Get Ethereum price |
-| link |			Get Chainlink price |
-| ltc |			Get Litecoin price |
-| mco2 |			Get Moss Earth price |
-| paxg |			Get PAX Gold price |
-| usdc |			Get USD Coin price |
-| wbx |			Get WBiX price |
-| xrp |			Get Ripple price |
+| [COIN] | Description            |
+| ------ | ---------------------- |
+| bch    | Get Bitcoin Cash price |
+| btc    | Get Bitcoi price       |
+| chz    | Get Chiliz price       |
+| eth    | Get Ethereum price     |
+| link   | Get Chainlink price    |
+| ltc    | Get Litecoin price     |
+| mco2   | Get Moss Earth price   |
+| paxg   | Get PAX Gold price     |
+| usdc   | Get USD Coin price     |
+| wbx    | Get WBiX price         |
+| xrp    | Get Ripple price       |
 
 > Note: All prices in brazilian reais (R$).
 
 ### [VIEW MODE]
-Optional argument to set the data output style to be displayed. If no [VIEW MODE] is set, --table is used by default. Raw, single and table view are exclusive and can not be combined with each other or any other available view mode. Round, -d and -d0 view modes can be combined with -currency view mode. 
 
-| [VIEW MODE] | Description |
-| ------ | ------ |
-| -r, -raw |		Display raw price data |
-| -d, -round |		Display rounded price data to 04 decimal places |
-| -d2 |			Display rounded price data to 02 decimal places |
-| -d0 |			Display rounded price data with no decimal places |
-| -c, -currency |		Display raw price data with brazilian real currency symbol |
-| -single |			Display all price data of the selected cryptocoin |
-| -table |			Display selected cryptocoin(s) price data in table format |
+Optional argument to set the data output style to be displayed. If no [VIEW MODE] is set, --table is used by default. Raw, single and table view are exclusive and can not be combined with each other or any other available view mode. Round, -d and -d0 view modes can be combined with -currency view mode.
+
+| [VIEW MODE]   | Description                                                |
+| ------------- | ---------------------------------------------------------- |
+| -r, -raw      | Display raw price data                                     |
+| -d, -round    | Display rounded price data to 04 decimal places            |
+| -d2           | Display rounded price data to 02 decimal places            |
+| -d0           | Display rounded price data with no decimal places          |
+| -c, -currency | Display raw price data with brazilian real currency symbol |
+| -single       | Display all price data of the selected cryptocoin          |
+| -table        | Display selected cryptocoin(s) price data in table format  |
 
 ### [DATA TYPE]
+
 Optional argument to set the data items to be displayed in compatible [VIEW MODE] types: raw, rounded and currency. Only one [DATA TYPE] argument allowed per usage.
 
-| Plugin | README |
-| ------ | ------ |
-| \-\-last |			Last price |
-| \-\-buy	|		Buy price |
-| \-\-sell |			Sell price |
-| \-\-high |			Highest price of the day |
-| \-\-low	|		Lowest prie of the day |
-| \-\-open |			Opening price of the day |
-| \-\-vol, \-\-volume |		Negotiated volume of the day |
+| Plugin              | README                       |
+| ------------------- | ---------------------------- |
+| \-\-last            | Last price                   |
+| \-\-buy             | Buy price                    |
+| \-\-sell            | Sell price                   |
+| \-\-high            | Highest price of the day     |
+| \-\-low             | Lowest prie of the day       |
+| \-\-open            | Opening price of the day     |
+| \-\-vol, \-\-volume | Negotiated volume of the day |
 
 ## Additional Options
 
-| Plugin | README |
-| ------ | ------ |
-| \-\-help |			Display command help |
-| \-\-version |       Output version information |
+| Plugin      | README                     |
+| ----------- | -------------------------- |
+| \-\-help    | Display command help       |
+| \-\-version | Output version information |
 
 # References
 
