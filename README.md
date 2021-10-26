@@ -168,4 +168,4 @@ Optional argument to set the data items to be displayed in compatible [VIEW MODE
 
 ## License
 
-[MIT License](https://github.com/esqb/brcoin/blob/main/LICENSE)
+[MIT License](https://github.com/lucianoayres/brcoin/blob/main/LICENSE)
