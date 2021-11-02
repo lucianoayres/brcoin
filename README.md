@@ -110,19 +110,23 @@ brcoin [COIN] [VIEW MODE] [DATA TYPE]
 Sets a single or multiple cryptocoins ticker symbols.
 Mandatory only when used combined with the folowing [VIEW MODE] types: raw, round, currency and single. If no [DATA TYPE] is set, --last is set by default.
 
-| [COIN] | Description            |
-| ------ | ---------------------- |
-| bch    | Get Bitcoin Cash price |
-| btc    | Get Bitcoi price       |
-| chz    | Get Chiliz price       |
-| eth    | Get Ethereum price     |
-| link   | Get Chainlink price    |
-| ltc    | Get Litecoin price     |
-| mco2   | Get Moss Earth price   |
-| paxg   | Get PAX Gold price     |
-| usdc   | Get USD Coin price     |
-| wbx    | Get WBiX price         |
-| xrp    | Get Ripple price       |
+| [COIN] | Description             |
+| ------ | ----------------------- |
+| ada    | Get Cardano price       |
+| ankr   | Get ANKR price          |
+| axs    | Get Axie Infinity price |
+| band   | Get Band Protocol price |
+| bch    | Get Bitcoin Cash price  |
+| btc    | Get Bitcoi price        |
+| chz    | Get Chiliz price        |
+| eth    | Get Ethereum price      |
+| link   | Get Chainlink price     |
+| ltc    | Get Litecoin price      |
+| mco2   | Get Moss Earth price    |
+| paxg   | Get PAX Gold price      |
+| usdc   | Get USD Coin price      |
+| wbx    | Get WBiX price          |
+| xrp    | Get Ripple price        |
 
 > Note: All prices in brazilian reais (R$).
 
