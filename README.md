@@ -125,6 +125,7 @@ Mandatory only when used combined with the folowing [VIEW MODE] types: raw, roun
 | mco2   | Get Moss Earth price    |
 | paxg   | Get PAX Gold price      |
 | usdc   | Get USD Coin price      |
+| sushi  | Get SushiSwap price     |
 | wbx    | Get WBiX price          |
 | xrp    | Get Ripple price        |
 
