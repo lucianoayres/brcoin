@@ -117,7 +117,7 @@ Mandatory only when used combined with the folowing [VIEW MODE] types: raw, roun
 | axs    | Get Axie Infinity price |
 | band   | Get Band Protocol price |
 | bch    | Get Bitcoin Cash price  |
-| btc    | Get Bitcoi price        |
+| btc    | Get Bitcoin price       |
 | chz    | Get Chiliz price        |
 | eth    | Get Ethereum price      |
 | link   | Get Chainlink price     |
