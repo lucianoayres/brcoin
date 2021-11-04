@@ -11,7 +11,7 @@ software_version="1.0"
 software_author="Luciano Ayres (github.com/lucianoayres)"
 
 # Script Setting Variables
-coin_tags=("ADA" "ANKR" "AXS" "BAND" "BCH" "BTC" "CHZ" "ETH" "LINK" "LTC" "MCO2" "PAXG" "USDC" "SUSHI" "WBX" "XRP")
+coin_tags=("ADA" "ANKR" "AXS" "BAND" "BCH" "BTC" "CHZ" "ETH" "LINK" "LTC" "MCO2" "PAXG" "USDC" "SUSHI" "WBX" "XRP" "ZXR")
 coin_selection=()
 data_item=("last" "buy" "sell" "high" "low" "open" "vol" "date")
 item_selection=""

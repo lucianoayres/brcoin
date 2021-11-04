@@ -128,6 +128,7 @@ Mandatory only when used combined with the folowing [VIEW MODE] types: raw, roun
 | sushi  | Get SushiSwap price     |
 | wbx    | Get WBiX price          |
 | xrp    | Get Ripple price        |
+| zxr    | Get 0x price            |
 
 > Note: All prices in brazilian reais (R$).
 
