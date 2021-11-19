@@ -119,6 +119,7 @@ Mandatory only when used combined with the folowing [VIEW MODE] types: raw, roun
 | bch    | Get Bitcoin Cash price  |
 | btc    | Get Bitcoin price       |
 | chz    | Get Chiliz price        |
+| doge   | Get Dogecoin price      |
 | eth    | Get Ethereum price      |
 | link   | Get Chainlink price     |
 | ltc    | Get Litecoin price      |
