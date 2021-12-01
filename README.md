@@ -110,28 +110,29 @@ brcoin [COIN] [VIEW MODE] [DATA TYPE]
 Sets a single or multiple cryptocoins ticker symbols.
 Mandatory only when used combined with the folowing [VIEW MODE] types: raw, round, currency and single. If no [DATA TYPE] is set, --last is set by default.
 
-| [COIN] | Description             |
-| ------ | ----------------------- |
-| ada    | Get Cardano price       |
-| ankr   | Get ANKR price          |
-| axs    | Get Axie Infinity price |
-| band   | Get Band Protocol price |
-| bch    | Get Bitcoin Cash price  |
-| btc    | Get Bitcoin price       |
-| chz    | Get Chiliz price        |
-| doge   | Get Dogecoin price      |
-| eth    | Get Ethereum price      |
-| link   | Get Chainlink price     |
-| ltc    | Get Litecoin price      |
-| mco2   | Get Moss Earth price    |
-| paxg   | Get PAX Gold price      |
-| sol    | Get Solana price        |
-| sushi  | Get SushiSwap price     |
-| uni    | Get Uniswap price       |
-| usdc   | Get USD Coin price      |
-| wbx    | Get WBiX price          |
-| xrp    | Get Ripple price        |
-| zxr    | Get 0x price            |
+| [COIN] | Description               |
+| ------ | ------------------------- |
+| ada    | Get Cardano price         |
+| ankr   | Get ANKR price            |
+| axs    | Get Axie Infinity price   |
+| band   | Get Band Protocol price   |
+| bch    | Get Bitcoin Cash price    |
+| btc    | Get Bitcoin price         |
+| chz    | Get Chiliz price          |
+| crv    | Get Curve Dao Token price |
+| doge   | Get Dogecoin price        |
+| eth    | Get Ethereum price        |
+| link   | Get Chainlink price       |
+| ltc    | Get Litecoin price        |
+| mco2   | Get Moss Earth price      |
+| paxg   | Get PAX Gold price        |
+| sol    | Get Solana price          |
+| sushi  | Get SushiSwap price       |
+| uni    | Get Uniswap price         |
+| usdc   | Get USD Coin price        |
+| wbx    | Get WBiX price            |
+| xrp    | Get Ripple price          |
+| zxr    | Get 0x price              |
 
 > Note: All prices in brazilian reais (R$).
 
