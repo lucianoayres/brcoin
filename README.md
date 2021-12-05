@@ -130,6 +130,7 @@ Mandatory only when used combined with the folowing [VIEW MODE] types: raw, roun
 | sushi  | Get SushiSwap price       |
 | uni    | Get Uniswap price         |
 | usdc   | Get USD Coin price        |
+| usdp   | Get Pax Dollar price      |
 | wbx    | Get WBiX price            |
 | xrp    | Get Ripple price          |
 | zxr    | Get 0x price              |
