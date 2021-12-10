@@ -113,6 +113,7 @@ Mandatory only when used combined with the folowing [VIEW MODE] types: raw, roun
 | [COIN] | Description               |
 | ------ | ------------------------- |
 | ada    | Get Cardano price         |
+| ago    | Get Algorand price        |
 | ankr   | Get ANKR price            |
 | axs    | Get Axie Infinity price   |
 | band   | Get Band Protocol price   |
